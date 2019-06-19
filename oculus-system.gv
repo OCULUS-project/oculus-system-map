@@ -3,46 +3,52 @@ digraph oculus {
     label="oculus-system" 
     
     graph [fontsize=45]
-    node [fontname=Arial]
+    node [fontname=Arial fontcolor=white]
     edge [dir=both penwidth=7] 
+    nodesep=2
 
     subgraph gateway {
-        node [fontcolor=blue fontsize=42 shape=doubleoctagon style=filled height=3]
+        node [fontsize=42 shape=doubleoctagon style=filled color=cyan4 height=3]
 
-        oculus_gateway_service
+        {rank=source; oculus_gateway_service}
     }
     
     subgraph services {
-        node [fontcolor=white fontsize=32 shape=octagon style=filled color=chocolate height=2]
-        
-        oculus_core_service [height=4 width=6]
-        oculus_facts_service
-        oculus_images_service
-        oculus_patients_db_service
-        oculus_users_db_service
-        oculus_inference_service
+        node [padding=5 fontsize=32 shape=octagon style=filled color=chocolate height=2]
+               
+        { rank=same; 
+            oculus_core_service 
+            oculus_facts_service
+            oculus_images_service
+            oculus_patients_db_service
+            oculus_users_db_service
+            oculus_inference_service
+        }
 
         oculus_core_service -> oculus_images_service
         oculus_core_service -> oculus_patients_db_service
         oculus_core_service -> oculus_inference_service
         oculus_core_service -> oculus_facts_service
-
+        
     }
 
     subgraph databases {
-        node [fontcolor=white fontsize=32 shape=ellipse style=filled color=darkgoldenrod1 height=1.5]
+        node [fontsize=32 shape=ellipse width=3 style=filled color=darkgoldenrod1 height=1.5]
         
-        jobs_db
-        facts_db
-        images_db
-        patients_db
-        users_db
+        { rank=sink;
+           jobs_db
+           facts_db
+           images_db
+           patients_db
+           users_db
+        }
     }
 
     subgraph frontend {
-        node [fontcolor=green fontsize=32 shape=hexagon style=filled height=2]
+        node [fontsize=32 shape=hexagon style=filled color=darkgreen height=2]
 
         oculus_frontend_app    
+        { rank=source; oculus_frontend_app }
     }
 
     oculus_gateway_service -> oculus_frontend_app

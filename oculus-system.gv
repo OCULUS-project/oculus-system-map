@@ -1,8 +1,8 @@
 digraph oculus {
     
     label="oculus-system" 
-    
-    graph [fontsize=45]
+   
+    graph [fontsize=45 ranksep=2 bgcolor=ivory2]
     node [fontname=Arial fontcolor=white]
     edge [dir=both penwidth=7] 
     nodesep=2
@@ -10,25 +10,30 @@ digraph oculus {
     subgraph gateway {
         node [fontsize=42 shape=doubleoctagon style=filled color=cyan4 height=3]
 
-        {rank=source; oculus_gateway_service}
+        {rank=source; "gateway-service"}
     }
     
     subgraph services {
-        node [padding=5 fontsize=32 shape=octagon style=filled color=chocolate height=2]
-               
-        { rank=same; 
-            oculus_core_service 
-            oculus_facts_service
-            oculus_images_service
-            oculus_patients_db_service
-            oculus_users_db_service
-            oculus_inference_service
-        }
+        node [padding=5 fontsize=32 shape=octagon style=filled color=chocolate height=2 colorsheme=paired12]
+        edge [style=bold colorscheme="paired12"]
 
-        oculus_core_service -> oculus_images_service
-        oculus_core_service -> oculus_patients_db_service
-        oculus_core_service -> oculus_inference_service
-        oculus_core_service -> oculus_facts_service
+        "core-service" [padding=8 fontsize=45 height=4 width=7]
+        "facts-service"
+        "images-service"
+        "patients-db-service"
+        "users-db-service"
+        "inference-service"
+        "images-inference-service"
+
+        "core-service" -> "images-service" [headport=w tailport=ne colorsheme=paired12 color=1]
+        "core-service" -> "patients-db-service" [headport=w tailport=e color=2]
+        "core-service" -> "inference-service" [headport=sw tailport=se color=3]
+        "core-service" -> "facts-service" [headport=sw tailport=nw color=4]
+
+        "inference-service" -> "facts-service" [color=3]
+
+        "images-inference-service" -> "images-service" [color=5]
+        "images-inference-service" -> "facts-service" [color=5]
         
     }
 
@@ -36,32 +41,49 @@ digraph oculus {
         node [fontsize=32 shape=ellipse width=3 style=filled color=darkgoldenrod1 height=1.5]
         
         { rank=sink;
-           jobs_db
-           facts_db
-           images_db
-           patients_db
-           users_db
+           "jobs-db"
+           "facts-db"
+           "images-db"
+           "patients-db"
+           "users-db"
         }
+    }
+
+    subgraph events {
+        node [fontsize=45 shape=doublecircle width=4.5 style=filled color=dodgerblue1]
+
+        "event-store"
     }
 
     subgraph frontend {
         node [fontsize=32 shape=hexagon style=filled color=darkgreen height=2]
 
-        oculus_frontend_app    
-        { rank=source; oculus_frontend_app }
+        { rank=source; "frontend-app" }
     }
 
-    oculus_gateway_service -> oculus_frontend_app
-    oculus_gateway_service -> oculus_core_service
-    oculus_gateway_service -> oculus_images_service
-    oculus_gateway_service -> oculus_patients_db_service
-    oculus_gateway_service -> oculus_users_db_service
-    
-    jobs_db -> oculus_core_service
-    facts_db -> oculus_facts_service
-    images_db -> oculus_images_service
-    patients_db -> oculus_patients_db_service
-    users_db -> oculus_users_db_service
+    subgraph gateway_service_connections {
+        "gateway-service" -> "frontend-app" [headport=n]
+        "gateway-service" -> "core-service" [headport=n color=grey11]
+        "gateway-service" -> "images-service" [headport=n color=grey11]
+        "gateway-service" -> "patients-db-service" [headport=n color=grey11]
+        "gateway-service" -> "users-db-service" [headport=n color=grey11]
+    }
+
+    subgraph service_db_connections {
+        "jobs-db" -> "core-service" [color=gray51]
+        "facts-db" -> "facts-service" [color=gray51]
+        "images-db" -> "images-service" [color=gray51]
+        "patients-db" -> "patients-db-service" [color=gray51]
+        "users-db" -> "users-db-service" [color=gray51]
+    }
+
+    subgraph event_bus {
+        edge [style=dotted color=dodgerblue4]
+
+        "event-store" -> "core-service"
+        "event-store" -> "inference-service"
+        "event-store" -> "images-inference-service"
+    }
 
 }
 

@@ -34,6 +34,8 @@ digraph oculus {
 
         "images-inference-service" -> "images-service" [color=5]
         "images-inference-service" -> "facts-service" [color=5]
+
+        "patients-db-service" -> "facts-service" [color=2]
         
     }
 

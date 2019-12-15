@@ -83,6 +83,7 @@ digraph oculus {
         edge [style=dotted color=dodgerblue4]
 
         "event-store" -> "core-service"
+        "event-store" -> "facts-service"
         "event-store" -> "inference-service"
         "event-store" -> "images-inference-service"
     }

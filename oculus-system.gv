@@ -24,16 +24,12 @@ digraph oculus {
         "users-db-service"
         "inference-service"
         "images-inference-service"
-
-        "core-service" -> "images-service" [headport=w tailport=ne colorsheme=paired12 color=1]
-        "core-service" -> "patients-db-service" [headport=w tailport=e color=2]
-        "core-service" -> "inference-service" [headport=sw tailport=se color=3]
+        
         "core-service" -> "facts-service" [headport=sw tailport=nw color=4]
 
         "inference-service" -> "facts-service" [color=3]
 
         "images-inference-service" -> "images-service" [color=5]
-        "images-inference-service" -> "facts-service" [color=5]
 
         "patients-db-service" -> "facts-service" [color=2]
         
